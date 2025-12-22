@@ -1,0 +1,29 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: outbox-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: outbox_pattern_poc
+    ports:
+      - "13306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  firebase-emulator:
+    image: mtlynch/firebase-emulator:latest
+    container_name: outbox-firebase-emulator
+    ports:
+      - "18085:8085"
+    environment:
+      - FIREBASE_PROJECT_ID=outbox-pattern-poc
+    command:
+      ["emulators:start", "--only", "pubsub", "--project", "outbox-pattern-poc"]
+
+volumes:
+  mysql-data:
