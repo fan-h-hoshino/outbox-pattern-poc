@@ -1,18 +1,23 @@
 import type { PrismaClient } from '../../generated/prisma/client';
-import type { IPubSubClient } from './pubsub';
+import type { IService } from './service';
+import type { PublishInput } from './message-publisher';
 
-export class MessageRelay {
+export class MessageRelay implements IService<void, number> {
   private prisma: PrismaClient;
-  private pubSubClient: IPubSubClient;
+  private messagePublisher: IService<PublishInput, string>;
   private topicName: string;
 
-  constructor(prisma: PrismaClient, pubSubClient: IPubSubClient, topicName: string) {
+  constructor(
+    prisma: PrismaClient,
+    messagePublisher: IService<PublishInput, string>,
+    topicName: string,
+  ) {
     this.prisma = prisma;
-    this.pubSubClient = pubSubClient;
+    this.messagePublisher = messagePublisher;
     this.topicName = topicName;
   }
 
-  async processPendingMessages(): Promise<number> {
+  async execute(): Promise<number> {
     const pendingMessages = await this.prisma.outboxMessage.findMany({
       where: { status: 'pending' },
       orderBy: { createdAt: 'asc' },
@@ -23,7 +28,10 @@ export class MessageRelay {
 
     for (const message of pendingMessages) {
       try {
-        await this.pubSubClient.publish(this.topicName, JSON.parse(message.payload));
+        await this.messagePublisher.execute({
+          topicName: this.topicName,
+          data: JSON.parse(message.payload),
+        });
         await this.prisma.outboxMessage.update({
           where: { id: message.id },
           data: {

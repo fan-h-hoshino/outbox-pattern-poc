@@ -3,43 +3,36 @@ import { createApp } from './app';
 import { config } from './config';
 import { PrismaClient } from '../generated/prisma/client';
 import { PrismaMariaDb } from '@prisma/adapter-mariadb';
-import { PubSubClient } from './services/pubsub';
+import { createPubSubClient } from './services/pubsub';
+import { MessagePublisher } from './services/message-publisher';
 import { MessageRelay } from './services/message-relay';
-import { SubscriberWorker } from './services/subscriber-worker';
 
 const adapter = new PrismaMariaDb({
-  host: process.env.DATABASE_HOST || 'localhost',
-  port: parseInt(process.env.DATABASE_PORT || '13306', 10),
-  user: process.env.DATABASE_USER || 'root',
-  password: process.env.DATABASE_PASSWORD || 'password',
-  database: process.env.DATABASE_NAME || 'outbox_pattern_poc',
-  connectionLimit: 5,
+  host: config.database.host,
+  port: config.database.port,
+  user: config.database.user,
+  password: config.database.password,
+  database: config.database.name,
+  connectionLimit: config.database.connectionLimit,
 });
 const prisma = new PrismaClient({ adapter });
 
-const pubSubClient = new PubSubClient({
+const pubSubClient = createPubSubClient({
   emulatorHost: config.pubsub.emulatorHost,
   projectId: config.pubsub.projectId,
 });
+const messagePublisher = new MessagePublisher(pubSubClient);
 
 const app = createApp(prisma);
 
 // Message Relay (Outbox からメッセージを取り出して Pub/Sub に送信)
-const messageRelay = new MessageRelay(prisma, pubSubClient, config.pubsub.topicName);
-
-// Subscriber Worker (Pub/Sub からメッセージを取得して /subscribe に送信)
-const subscriberWorker = new SubscriberWorker(
-  pubSubClient,
-  config.pubsub.subscriptionName,
-  config.server.subscribeEndpoint,
-  config.subscriber.maxMessages,
-);
+const messageRelay = new MessageRelay(prisma, messagePublisher, config.pubsub.topicName);
 
 // Message Relay のポーリング開始
 const startMessageRelay = () => {
   setInterval(async () => {
     try {
-      const processed = await messageRelay.processPendingMessages();
+      const processed = await messageRelay.execute();
       if (processed > 0) {
         console.log(`[MessageRelay] Processed ${processed} messages`);
       }
@@ -47,20 +40,6 @@ const startMessageRelay = () => {
       console.error('[MessageRelay] Error processing messages:', error);
     }
   }, config.relay.pollingIntervalMs);
-};
-
-// Subscriber Worker のポーリング開始
-const startSubscriberWorker = () => {
-  setInterval(async () => {
-    try {
-      const processed = await subscriberWorker.processMessages();
-      if (processed > 0) {
-        console.log(`[SubscriberWorker] Processed ${processed} messages`);
-      }
-    } catch (error) {
-      console.error('[SubscriberWorker] Error processing messages:', error);
-    }
-  }, config.subscriber.pollingIntervalMs);
 };
 
 console.log(`Server is running on http://localhost:${config.server.port}`);
@@ -73,4 +52,3 @@ serve({
 });
 
 startMessageRelay();
-startSubscriberWorker();

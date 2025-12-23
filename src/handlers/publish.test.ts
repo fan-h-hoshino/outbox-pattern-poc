@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Hono } from 'hono';
-import { publishHandler } from './publish';
+import { createPublishHandlers } from './publish';
 
 vi.mock('../generated/prisma', () => ({
   PrismaClient: vi.fn(),
@@ -17,7 +17,7 @@ describe('POST /publish', () => {
 
   const createApp = () => {
     const app = new Hono();
-    app.post('/publish', publishHandler(mockPrisma as never));
+    app.post('/publish', ...createPublishHandlers(mockPrisma as never));
     return app;
   };
 
@@ -70,8 +70,6 @@ describe('POST /publish', () => {
     });
 
     expect(res.status).toBe(400);
-    const body = await res.json();
-    expect(body.error).toBe('data is required');
   });
 
   it('トランザクションが失敗した場合は 500 を返す', async () => {

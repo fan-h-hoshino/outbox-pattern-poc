@@ -1,0 +1,13 @@
+{
+  "topics": [
+    {
+      "name": "my-topic",
+      "subscriptions": [
+        {
+          "name": "my-subscription",
+          "endpoint": "http://host.docker.internal:3000/subscribe"
+        }
+      ]
+    }
+  ]
+}
