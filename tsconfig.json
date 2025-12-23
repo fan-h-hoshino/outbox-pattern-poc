@@ -9,7 +9,13 @@
     "outDir": "./dist",
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@modules/interface": ["src/modules/interface/index.ts"],
+      "@modules/pubsub": ["src/modules/pubsub/index.ts"],
+      "@modules/relay": ["src/modules/relay/index.ts"]
+    }
   },
   "include": ["src/**/*", "generated/**/*"],
   "exclude": ["node_modules", "dist"]

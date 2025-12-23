@@ -2,15 +2,16 @@ import { createFactory } from 'hono/factory';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import type { PrismaClient } from '../../generated/prisma/client';
+import type { TransactionClient } from '../prisma/types';
 
 const publishRequestSchema = z.object({
   data: z.string().min(1, 'data is required'),
 });
 
-type TransactionClient = Parameters<Parameters<PrismaClient['$transaction']>[0]>[0];
+const factory = createFactory();
 
 export const createPublishHandlers = (prisma: PrismaClient) => {
-  return createFactory().createHandlers(zValidator('json', publishRequestSchema), async (c) => {
+  return factory.createHandlers(zValidator('json', publishRequestSchema), async (c) => {
     const body = c.req.valid('json');
 
     try {

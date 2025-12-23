@@ -2,9 +2,7 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { z } from 'zod';
 import { config } from '../config';
-import { createPubSubClient } from '../services/pubsub';
-import { TopicInitializer } from '../services/topic-initializer';
-import { PushSubscriptionInitializer } from '../services/push-subscription-initializer';
+import { createPubSubClient, TopicInitializer, PushSubscriptionInitializer } from '@modules/pubsub';
 
 const pubSubConfigSchema = z.object({
   topics: z.array(

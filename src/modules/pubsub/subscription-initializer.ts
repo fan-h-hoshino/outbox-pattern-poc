@@ -1,5 +1,5 @@
 import type { PubSub } from '@google-cloud/pubsub';
-import type { IService } from './service';
+import type { IService } from '@modules/interface';
 
 export interface CreatePushSubscriptionInput {
   topicName: string;

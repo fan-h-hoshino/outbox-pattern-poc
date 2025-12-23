@@ -9,4 +9,19 @@ export default tseslint.config(
   {
     ignores: ['node_modules/', 'dist/', '*.config.js'],
   },
+  {
+    rules: {
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['**/modules/*/*', '!**/modules/*/index'],
+              message: 'Import from @modules/* only (e.g., @modules/pubsub)',
+            },
+          ],
+        },
+      ],
+    },
+  },
 );

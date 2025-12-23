@@ -3,9 +3,8 @@ import { createApp } from './app';
 import { config } from './config';
 import { PrismaClient } from '../generated/prisma/client';
 import { PrismaMariaDb } from '@prisma/adapter-mariadb';
-import { createPubSubClient } from './services/pubsub';
-import { MessagePublisher } from './services/message-publisher';
-import { MessageRelay } from './services/message-relay';
+import { createPubSubClient, MessagePublisher } from '@modules/pubsub';
+import { MessageRelay } from '@modules/relay';
 
 const adapter = new PrismaMariaDb({
   host: config.database.host,

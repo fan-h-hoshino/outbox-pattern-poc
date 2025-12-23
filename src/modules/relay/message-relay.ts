@@ -1,6 +1,6 @@
-import type { PrismaClient } from '../../generated/prisma/client';
-import type { IService } from './service';
-import type { PublishInput } from './message-publisher';
+import type { PrismaClient } from '../../../generated/prisma/client';
+import type { IService } from '@modules/interface';
+import type { PublishInput } from '@modules/pubsub';
 
 export class MessageRelay implements IService<void, number> {
   private prisma: PrismaClient;

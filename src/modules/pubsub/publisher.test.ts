@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MessagePublisher } from './message-publisher';
+import { MessagePublisher } from '@modules/pubsub';
 import type { PubSub } from '@google-cloud/pubsub';
 
 describe('MessagePublisher', () => {
