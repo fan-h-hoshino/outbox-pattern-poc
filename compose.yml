@@ -6,11 +6,11 @@ services:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: outbox_pattern_poc
     ports:
-      - "13306:3306"
+      - '13306:3306'
     volumes:
       - mysql-data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -23,10 +23,10 @@ services:
     volumes:
       - ./firebase.json:/app/firebase.json
     ports:
-      - "18085:8085"
-      - "18080:8080"
-      - "14000:4000"
-      - "14400:4400"
+      - '18085:8085'
+      - '18080:8080'
+      - '14000:4000'
+      - '14400:4400'
     command: /bin/sh -c "firebase emulators:start"
     restart: always
     working_dir: /app

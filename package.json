@@ -21,12 +21,15 @@
     "db:generate": "dotenvx run -f .env -- prisma generate",
     "db:push": "dotenvx run -f .env -- prisma db push",
     "db:studio": "dotenvx run -f .env -- prisma studio",
+    "pubsub:setup": "dotenvx run -f .env -- tsx src/scripts/setup-pubsub.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@google-cloud/pubsub": "^5.2.0",
     "@hono/node-server": "^1.19.7",
+    "@prisma/adapter-mariadb": "^7.2.0",
     "@prisma/client": "^7.2.0",
     "@dotenvx/dotenvx": "^1.51.2",
     "hono": "^4.11.1"

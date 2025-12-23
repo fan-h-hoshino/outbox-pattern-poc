@@ -6,3 +6,24 @@ generator client {
 datasource db {
   provider = "mysql"
 }
+
+model Event {
+  id        String   @id @default(uuid())
+  data      String
+  createdAt DateTime @default(now())
+
+  outboxMessage OutboxMessage?
+}
+
+model OutboxMessage {
+  id          String    @id @default(uuid())
+  eventId     String    @unique
+  payload     String    @db.Text
+  status      String    @default("pending")
+  createdAt   DateTime  @default(now())
+  publishedAt DateTime?
+
+  event Event @relation(fields: [eventId], references: [id])
+
+  @@index([status, createdAt])
+}
