@@ -21,7 +21,7 @@ export class MessageRelay implements IService<void, number> {
     const pendingMessages = await this.prisma.outboxMessage.findMany({
       where: { status: 'pending' },
       orderBy: { createdAt: 'asc' },
-      take: 100,
+      take: 1000,
     });
 
     let processedCount = 0;

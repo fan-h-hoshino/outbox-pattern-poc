@@ -23,6 +23,7 @@
     "db:studio": "dotenvx run -f .env -- prisma studio",
     "pubsub:setup": "dotenvx run -f .env -- tsx src/scripts/setup-pubsub.ts",
     "lint": "eslint .",
+    "load-test": "k6 run k6/publish-load-test.js",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write ."
   },
