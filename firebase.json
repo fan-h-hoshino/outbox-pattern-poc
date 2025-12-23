@@ -1,11 +1,21 @@
 {
   "emulators": {
     "pubsub": {
-      "port": 8085
+      "port": 8085,
+      "host": "0.0.0.0"
+    },
+    "firestore": {
+      "port": 8080,
+      "host": "0.0.0.0"
     },
     "ui": {
-      "enabled": false
+      "enabled": true,
+      "port": 4000,
+      "host": "0.0.0.0"
+    },
+    "hub": {
+      "port": 4400,
+      "host": "0.0.0.0"
     }
   }
 }
-

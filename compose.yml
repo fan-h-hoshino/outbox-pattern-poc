@@ -16,14 +16,20 @@ services:
       retries: 5
 
   firebase-emulator:
-    image: mtlynch/firebase-emulator:latest
+    build:
+      context: .
+      dockerfile: docker/firebase-emulator/Dockerfile
     container_name: outbox-firebase-emulator
+    volumes:
+      - ./firebase.json:/app/firebase.json
     ports:
       - "18085:8085"
-    environment:
-      - FIREBASE_PROJECT_ID=outbox-pattern-poc
-    command:
-      ["emulators:start", "--only", "pubsub", "--project", "outbox-pattern-poc"]
+      - "18080:8080"
+      - "14000:4000"
+      - "14400:4400"
+    command: /bin/sh -c "firebase emulators:start"
+    restart: always
+    working_dir: /app
 
 volumes:
   mysql-data:
