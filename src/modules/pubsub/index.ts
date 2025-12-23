@@ -1,5 +1,3 @@
-export { createPubSubClient } from './client';
-export type { PubSubClientConfig } from './client';
 export { MessagePublisher } from './publisher';
 export type { PublishInput } from './publisher';
 export { TopicInitializer } from './topic-initializer';

@@ -41,7 +41,7 @@ describe('MessageRelay', () => {
       expect(mockPrisma.outboxMessage.findMany).toHaveBeenCalledWith({
         where: { status: 'pending' },
         orderBy: { createdAt: 'asc' },
-        take: 100,
+        take: 1000,
       });
       expect(mockMessagePublisher.execute).toHaveBeenCalledTimes(2);
       expect(mockPrisma.outboxMessage.update).toHaveBeenCalledTimes(2);

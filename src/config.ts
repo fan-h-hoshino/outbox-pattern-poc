@@ -2,12 +2,7 @@ import { z } from 'zod';
 
 const configSchema = z.object({
   database: z.object({
-    host: z.string().min(1),
-    port: z.coerce.number().int().positive(),
-    user: z.string().min(1),
-    password: z.string(),
-    name: z.string().min(1),
-    connectionLimit: z.coerce.number().int().positive(),
+    url: z.url(),
   }),
   pubsub: z.object({
     emulatorHost: z.string().min(1),
@@ -27,16 +22,11 @@ export type Config = z.infer<typeof configSchema>;
 
 const rawConfig = {
   database: {
-    host: process.env.DATABASE_HOST || 'localhost',
-    port: process.env.DATABASE_PORT || '13306',
-    user: process.env.DATABASE_USER || 'root',
-    password: process.env.DATABASE_PASSWORD || 'password',
-    name: process.env.DATABASE_NAME || 'outbox_pattern_poc',
-    connectionLimit: process.env.DATABASE_CONNECTION_LIMIT || '5',
+    url: process.env.DATABASE_URL,
   },
   pubsub: {
-    emulatorHost: process.env.PUBSUB_EMULATOR_HOST || 'localhost:18085',
-    projectId: process.env.PUBSUB_PROJECT_ID || 'outbox-poc-project',
+    emulatorHost: process.env.PUBSUB_EMULATOR_HOST,
+    projectId: process.env.PUBSUB_PROJECT_ID,
     topicName: 'my-topic',
     subscriptionName: 'my-subscription',
   },

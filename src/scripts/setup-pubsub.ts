@@ -2,7 +2,8 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { z } from 'zod';
 import { config } from '../config';
-import { createPubSubClient, TopicInitializer, PushSubscriptionInitializer } from '@modules/pubsub';
+import { TopicInitializer, PushSubscriptionInitializer } from '@modules/pubsub';
+import { PubSub } from '@google-cloud/pubsub';
 
 const pubSubConfigSchema = z.object({
   topics: z.array(
@@ -41,8 +42,7 @@ async function setup() {
   const pubSubConfigJson = loadPubSubConfig();
   console.log(`Loaded config with ${pubSubConfigJson.topics.length} topic(s)`);
 
-  const pubSubClient = createPubSubClient({
-    emulatorHost: config.pubsub.emulatorHost,
+  const pubSubClient = new PubSub({
     projectId: config.pubsub.projectId,
   });
   const topicInitializer = new TopicInitializer(pubSubClient);
