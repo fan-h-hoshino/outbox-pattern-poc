@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MessageRelay } from '@modules/relay';
-import type { IService } from '@modules/interface';
-import type { PublishInput } from '@modules/pubsub';
+import { MessageRelay } from './message-relay';
+import type { IService } from '../interface/service';
+import type { PublishInput } from '../pubsub/publisher';
 
 describe('MessageRelay', () => {
   const TOPIC_NAME = 'my-topic';

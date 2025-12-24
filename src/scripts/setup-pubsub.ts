@@ -2,7 +2,8 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { z } from 'zod';
 import { config } from '../config';
-import { TopicInitializer, PushSubscriptionInitializer } from '@modules/pubsub';
+import { TopicInitializer } from '../modules/pubsub/topic-initializer';
+import { PushSubscriptionInitializer } from '../modules/pubsub/subscription-initializer';
 import { PubSub } from '@google-cloud/pubsub';
 
 const pubSubConfigSchema = z.object({
