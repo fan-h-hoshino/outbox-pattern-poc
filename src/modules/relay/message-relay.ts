@@ -1,6 +1,9 @@
 import type { PrismaClient } from '../../../generated/prisma/client';
+import type { OutboxMessageModel } from '../../../generated/prisma/models/OutboxMessage';
 import type { IService } from '@modules/interface';
 import type { PublishInput } from '@modules/pubsub';
+
+const BATCH_SIZE = 1000;
 
 export class MessageRelay implements IService<void, number> {
   private prisma: PrismaClient;
@@ -18,33 +21,39 @@ export class MessageRelay implements IService<void, number> {
   }
 
   async execute(): Promise<number> {
-    const pendingMessages = await this.prisma.outboxMessage.findMany({
-      where: { status: 'pending' },
-      orderBy: { createdAt: 'asc' },
-      take: 1000,
-    });
+    return await this.prisma.$transaction(async (tx) => {
+      const pendingMessages = await tx.$queryRaw<OutboxMessageModel[]>`
+        SELECT id, eventId, payload, status, createdAt, publishedAt
+        FROM OutboxMessage
+        WHERE status = 'pending'
+        ORDER BY createdAt ASC
+        LIMIT ${BATCH_SIZE}
+        FOR UPDATE SKIP LOCKED
+      `;
 
-    let processedCount = 0;
+      let processedCount = 0;
 
-    for (const message of pendingMessages) {
-      try {
-        await this.messagePublisher.execute({
-          topicName: this.topicName,
-          data: JSON.parse(message.payload),
-        });
-        await this.prisma.outboxMessage.update({
-          where: { id: message.id },
-          data: {
-            status: 'published',
-            publishedAt: new Date(),
-          },
-        });
-        processedCount++;
-      } catch (error) {
-        console.error(`Failed to publish message ${message.id}:`, error);
+      for (const message of pendingMessages) {
+        try {
+          await this.messagePublisher.execute({
+            topicName: this.topicName,
+            data: JSON.parse(message.payload),
+          });
+          await tx.outboxMessage.update({
+            where: { id: message.id },
+            data: {
+              status: 'published',
+              publishedAt: new Date(),
+            },
+          });
+          processedCount++;
+        } catch (error) {
+          console.error(`Failed to publish message ${message.id}`);
+          throw error;
+        }
       }
-    }
 
-    return processedCount;
+      return processedCount;
+    });
   }
 }
