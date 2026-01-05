@@ -8,6 +8,14 @@
           "endpoint": "http://host.docker.internal:3000/subscribe"
         }
       ]
+    },
+    {
+      "name": "my-streaming-topic",
+      "subscriptions": [
+        {
+          "name": "my-streaming-subscription"
+        }
+      ]
     }
   ]
 }

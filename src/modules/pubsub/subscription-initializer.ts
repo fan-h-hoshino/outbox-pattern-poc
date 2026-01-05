@@ -4,7 +4,7 @@ import type { IService } from '@modules/interface';
 export interface CreatePushSubscriptionInput {
   topicName: string;
   subscriptionName: string;
-  pushEndpoint: string;
+  pushEndpoint?: string;
 }
 
 export class PushSubscriptionInitializer implements IService<CreatePushSubscriptionInput, void> {

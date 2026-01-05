@@ -2,8 +2,7 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { z } from 'zod';
 import { config } from '../config';
-import { TopicInitializer } from '../modules/pubsub/topic-initializer';
-import { PushSubscriptionInitializer } from '../modules/pubsub/subscription-initializer';
+import { TopicInitializer, PushSubscriptionInitializer } from '@modules/pubsub';
 import { PubSub } from '@google-cloud/pubsub';
 
 const pubSubConfigSchema = z.object({
@@ -13,7 +12,7 @@ const pubSubConfigSchema = z.object({
       subscriptions: z.array(
         z.object({
           name: z.string().min(1),
-          endpoint: z.httpUrl(),
+          endpoint: z.httpUrl().optional(),
         }),
       ),
     }),
