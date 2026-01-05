@@ -10,8 +10,8 @@ const pubSubClient = new PubSub({
 const messagePublisher = new MessagePublisher(pubSubClient);
 const messageRelay = new MessageRelay(prisma, messagePublisher, config.pubsub.topicName);
 
-export const startMessageRelay = () => {
-  setInterval(async () => {
+const poll = async () => {
+  while (true) {
     try {
       const processed = await messageRelay.execute();
       if (processed > 0) {
@@ -20,6 +20,9 @@ export const startMessageRelay = () => {
     } catch (error) {
       console.error('[MessageRelay] Error processing messages:', error);
     }
-  }, config.relay.pollingIntervalMs);
+  }
 };
 
+export const startMessageRelay = () => {
+  poll();
+};
