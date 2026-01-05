@@ -10,6 +10,10 @@ const configSchema = z.object({
     topicName: z.string().min(1),
     subscriptionName: z.string().min(1),
   }),
+  streaming: z.object({
+    topicName: z.string().min(1),
+    subscriptionName: z.string().min(1),
+  }),
   server: z.object({
     port: z.coerce.number().int().positive(),
   }),
@@ -35,6 +39,10 @@ const rawConfig = {
   },
   relay: {
     pollingIntervalMs: process.env.RELAY_POLLING_INTERVAL_MS || '5000',
+  },
+  streaming: {
+    topicName: 'my-streaming-topic',
+    subscriptionName: 'my-streaming-subscription',
   },
 };
 

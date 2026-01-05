@@ -2,7 +2,7 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { z } from 'zod';
 import { config } from '../config';
-import { TopicInitializer, PushSubscriptionInitializer } from '@modules/pubsub';
+import { TopicInitializer, PushSubscriptionCreator } from '@modules/pubsub';
 import { PubSub } from '@google-cloud/pubsub';
 
 const pubSubConfigSchema = z.object({
@@ -46,7 +46,7 @@ async function setup() {
     projectId: config.pubsub.projectId,
   });
   const topicInitializer = new TopicInitializer(pubSubClient);
-  const pushSubscriptionInitializer = new PushSubscriptionInitializer(pubSubClient);
+  const pushSubscriptionCreator = new PushSubscriptionCreator(pubSubClient);
 
   try {
     for (const topic of pubSubConfigJson.topics) {
@@ -57,7 +57,7 @@ async function setup() {
       for (const subscription of topic.subscriptions) {
         console.log(`  Creating push subscription: ${subscription.name}`);
         console.log(`    Push endpoint: ${subscription.endpoint}`);
-        await pushSubscriptionInitializer.execute({
+        await pushSubscriptionCreator.execute({
           topicName: topic.name,
           subscriptionName: subscription.name,
           pushEndpoint: subscription.endpoint,

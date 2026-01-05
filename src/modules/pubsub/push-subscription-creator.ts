@@ -7,7 +7,7 @@ export interface CreatePushSubscriptionInput {
   pushEndpoint?: string;
 }
 
-export class PushSubscriptionInitializer implements IService<CreatePushSubscriptionInput, void> {
+export class PushSubscriptionCreator implements IService<CreatePushSubscriptionInput, void> {
   constructor(private readonly client: PubSub) {}
 
   async execute(input: CreatePushSubscriptionInput): Promise<void> {
